@@ -14,7 +14,7 @@ jobs:
 
       - name: Decompress GZip file
         run: |
-          gzip -d export216x64pj1/export216x64pj1.asm.js.gz
+          gzip -d export216x64pj1.asm.js.gz
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
