@@ -14,7 +14,7 @@ jobs:
 
       - name: Decompress GZip file
         run: |
-          gzip -d godot216emptyexport.asm.js.gz
+          gzip -d godot216exporticon.asm.js.gz
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
