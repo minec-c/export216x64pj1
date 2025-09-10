@@ -11,17 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Emscripten
+      - name: Setup and Compile
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
           ./emsdk install latest
-          ./emsdk activate latest
-          echo "EMSDK=$(pwd)" >> $GITHUB_ENV
-          echo "$EMSDK" >> $GITHUB_PATH
-
-      - name: Compile to WebAssembly
-        run: emcc test1.cpp -s WASM=1 -o index.html
+          ./emsdk activate latest --embedded
+          emcc test1.cpp -s WASM=1 -o index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
