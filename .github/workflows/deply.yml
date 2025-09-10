@@ -6,10 +6,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    
+    # Permissions are required for deployment to GitHub Pages
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
-      - name: Setup Emscripten and Compile
+    steps:
+      - name: 📦 Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: 🛠️ Setup Emscripten and Compile
         run: |
           # 1. Clone the SDK
           git clone https://github.com/emscripten-core/emsdk.git
@@ -19,15 +27,23 @@ jobs:
           ./emsdk install latest
           ./emsdk activate latest
           
-          # 3. CRUCIAL FIX: Source the environment script to update the PATH
-          # This must be done to make 'emcc' visible in the current shell session.
+          # 3. CRUCIAL: Source the environment script to update the PATH
           source ./emsdk_env.sh
           
-          # 4. Now, the 'emcc' command will be found and executed
-          emcc test1.cpp -s WASM=1 -o index.html
+          # 4. Corrected file path: The 'emcc' command is now run from within the
+          #    'emsdk' directory, so we must reference the source file
+          #    and output directory one level up with '../'.
+          emcc ../test1.cpp -s WASM=1 -o ../index.html
 
-      - name: Upload artifact
+      - name: 🌐 Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: ⬆️ Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # The path to the directory containing the generated files
           path: .
+      
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
