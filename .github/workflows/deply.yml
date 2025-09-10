@@ -1,0 +1,30 @@
+name: Deploy WebAssembly App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Emscripten
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+          echo "EMSDK=$(pwd)" >> $GITHUB_ENV
+          echo "$EMSDK" >> $GITHUB_PATH
+
+      - name: Compile to WebAssembly
+        run: emcc test1.cpp -s WASM=1 -o index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # The path to the directory containing the generated files
+          path: .
