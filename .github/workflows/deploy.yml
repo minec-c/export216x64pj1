@@ -1,1 +1,38 @@
+name: Deploy to GitHub Pages
 
+on:
+  push:
+    branches:
+      - main # Change this to your default branch if it's not 'main'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    # Permissions are crucial for the deployment to work
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: 📦 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Compile C++ code
+        run: g++ -o newtest1 test1.cpp
+      
+      - name: 🚀 Run program to generate HTML
+        run: ./newtest1
+      
+      - name: 🌐 Setup Pages
+        uses: actions/configure-pages@v5
+      
+      - name: ⬆️ Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # This uploads all files in the current directory
+      
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
